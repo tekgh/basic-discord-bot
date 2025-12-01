@@ -1,9 +1,9 @@
 import discord
 from discord.ext import commands
 
-TOKEN = MTQ0NDc0MjExNzU3MzM5NDUwNQ.GXUQ1k.3jiMHNKf0t5F88Ucgl5oTET6A7dd091Ijpqz1U
-TARGET_CHANNEL_ID = X  # DO ZMIANY
-REACTION_THRESHOLD = 3
+TOKEN = TWOJ_TOKEN
+TARGET_CHANNEL_ID = TWOJE_ID_KANAU
+REACTION_THRESHOLD = TRESZHOLD
 FIRE_EMOJI = "🔥"
 
 intents = discord.Intents.default()
@@ -64,5 +64,6 @@ async def on_raw_reaction_add(payload):
 
         await target_channel.send(embed=embed)
         already_posted.add(message.id)
+
 
 bot.run(TOKEN)
