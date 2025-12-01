@@ -60,11 +60,12 @@ async def on_raw_reaction_add(payload):
         except Exception:
             pass
 
-        await target_channel.send(embed=embed)
+        await target.send(embed=embed)
         already_posted.add(message.id)
 
 
 bot.run(TOKEN)
+
 
 
 
