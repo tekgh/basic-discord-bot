@@ -4,11 +4,12 @@ from discord.ext import commands
 
 TWOJ_TOKEN = os.getenv("TWOJ_TOKEN")
 TWOJE_ID_KANAU = os.getenv("TWOJE_ID_KANAU")
+TRESZHOLD = int(os.getenv("TRESZHOLD"))
 
 
 TOKEN = TWOJ_TOKEN
 TARGET_CHANNEL_ID = TWOJE_ID_KANAU
-REACTION_THRESHOLD = 3
+REACTION_THRESHOLD = TRESZHOLD
 EMOJI = "🔥"
 
 intents = discord.Intents.default()
@@ -56,7 +57,7 @@ async def on_raw_reaction_add(payload):
         )
         embed.set_author(name=str(message.author), icon_url=getattr(message.author.avatar, "url", None))
         try:
-            embed.add_field(name="",value=f"[Kliknij aby przejść]({message.jump_url})", inline=False)
+            embed.add_field(name="",value=f"[jump]({message.jump_url})", inline=False)
         except Exception:
             pass
 
@@ -65,3 +66,4 @@ async def on_raw_reaction_add(payload):
 
 
 bot.run(TOKEN)
+
