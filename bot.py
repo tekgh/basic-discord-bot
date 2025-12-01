@@ -3,13 +3,12 @@ import os
 from discord.ext import commands
 
 TWOJ_TOKEN = os.getenv("TWOJ_TOKEN")
-TWOJE_ID_KANAU = int(os.getenv("TWOJE_ID_KANAU")) 
-TRESZHOLD = int(os.getenv("TRESZHOLD"))
+TWOJE_ID_KANAU = os.getenv("TWOJE_ID_KANAU")
 
 
 TOKEN = TWOJ_TOKEN
 TARGET_CHANNEL_ID = TWOJE_ID_KANAU
-REACTION_THRESHOLD = TRESZHOLD
+REACTION_THRESHOLD = 3
 EMOJI = "🔥"
 
 intents = discord.Intents.default()
@@ -44,23 +43,25 @@ async def on_raw_reaction_add(payload):
             target = await bot.fetch_channel(TARGET_CHANNEL_ID)
 
         files = []
-        image_url = None
         for attach in message.attachments:
             fp = await attach.to_file()
             files.append(fp)
-            if attach.content_type and attach.content_type.startswith("image"):
-                image_url = attach.url
+
+        content = message.content or None
+        jump = f"\n\n[🔗 Od oryginału]({message.jump_url})"
 
         embed = discord.Embed(
             description=message.content or "(brak treści — sprawdź Message Content Intent)",
             color=discord.Color.orange()
         )
         embed.set_author(name=str(message.author), icon_url=getattr(message.author.avatar, "url", None))
+        try:
+            embed.add_field(name="",value=f"[Kliknij aby przejść]({message.jump_url})", inline=False)
+        except Exception:
+            pass
 
-        if image_url:
-            embed.set_image(url=image_url)
-
-        await target.send(embed=embed, files=files)
+        await target.send(embed=embed)
         already_posted.add(message.id)
+
 
 bot.run(TOKEN)
