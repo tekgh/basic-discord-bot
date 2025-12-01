@@ -9,7 +9,7 @@ TWOJE_ID_KANAU = os.getenv("TWOJE_ID_KANAU")
 TOKEN = TWOJ_TOKEN
 TARGET_CHANNEL_ID = TWOJE_ID_KANAU
 REACTION_THRESHOLD = 3
-FIRE_EMOJI = "🔥"
+EMOJI = "🔥"
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -25,43 +25,36 @@ async def on_ready():
 
 @bot.event
 async def on_raw_reaction_add(payload):
-    # payload.member dostępny tylko jeśli zdarzenie pochodzi z guild i intents są ustawione
-    # ignoruj reakcje botów (jeśli payload.member istnieje)
     if payload.member and payload.member.bot:
         return
-
-    # sprawdź czy to fire emoji
-    # payload.emoji może być PartialEmoji — porównamy po nazwie/znaku
-    emoji_str = str(payload.emoji)
-    if emoji_str != FIRE_EMOJI:
+    if str(payload.emoji) != EMOJI:
         return
 
     channel = bot.get_channel(payload.channel_id)
     if channel is None:
-        # jeśli kanał nie w cache, pobierz przez API
         channel = await bot.fetch_channel(payload.channel_id)
 
     message = await channel.fetch_message(payload.message_id)
 
-    # znajdź reakcję odpowiadającą 🔥 (może być kilka typów emoji, więc porównujemy str)
-    fire_reaction = next((r for r in message.reactions if str(r.emoji) == FIRE_EMOJI), None)
-    if not fire_reaction:
-        return
+    fire_reaction = next((r for r in message.reactions if str(r.emoji) == EMOJI), None)
+    if fire_reaction and fire_reaction.count >= REACTION_THRESHOLD and message.id not in already_posted:
+        target = bot.get_channel(TARGET_CHANNEL_ID)
+        if target is None:
+            target = await bot.fetch_channel(TARGET_CHANNEL_ID)
 
-    count = fire_reaction.count
+        files = []
+        for attach in message.attachments:
+            fp = await attach.to_file()
+            files.append(fp)
 
-    if count >= REACTION_THRESHOLD and message.id not in already_posted:
-        target_channel = bot.get_channel(TARGET_CHANNEL_ID)
-        if target_channel is None:
-            target_channel = await bot.fetch_channel(TARGET_CHANNEL_ID)
+        content = message.content or None
+        jump = f"\n\n[🔗 Od oryginału]({message.jump_url})"
 
         embed = discord.Embed(
-            title="TAK ZWANA BOMBA",
             description=message.content or "(brak treści — sprawdź Message Content Intent)",
             color=discord.Color.orange()
         )
         embed.set_author(name=str(message.author), icon_url=getattr(message.author.avatar, "url", None))
-        # dodaj link do oryginalnej wiadomości jeśli chcesz:
         try:
             embed.add_field(name="Link", value=f"[Kliknij aby przejść]({message.jump_url})", inline=False)
         except Exception:
@@ -72,5 +65,6 @@ async def on_raw_reaction_add(payload):
 
 
 bot.run(TOKEN)
+
 
 
