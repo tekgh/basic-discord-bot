@@ -4,12 +4,11 @@ from discord.ext import commands
 
 TWOJ_TOKEN = os.getenv("TWOJ_TOKEN")
 TWOJE_ID_KANAU = os.getenv("TWOJE_ID_KANAU")
-TRESZHOLD = os.getenv("TRESZHOLD")
 
 
 TOKEN = TWOJ_TOKEN
 TARGET_CHANNEL_ID = TWOJE_ID_KANAU
-REACTION_THRESHOLD = TRESZHOLD
+REACTION_THRESHOLD = 3
 FIRE_EMOJI = "🔥"
 
 intents = discord.Intents.default()
@@ -73,4 +72,5 @@ async def on_raw_reaction_add(payload):
 
 
 bot.run(TOKEN)
+
 
