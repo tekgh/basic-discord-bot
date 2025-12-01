@@ -56,7 +56,7 @@ async def on_raw_reaction_add(payload):
         )
         embed.set_author(name=str(message.author), icon_url=getattr(message.author.avatar, "url", None))
         try:
-            embed.add_field(name="Link", value=f"[Kliknij aby przejść]({message.jump_url})", inline=False)
+            embed.add_field(value=f"[Kliknij aby przejść]({message.jump_url})", inline=False)
         except Exception:
             pass
 
@@ -65,6 +65,7 @@ async def on_raw_reaction_add(payload):
 
 
 bot.run(TOKEN)
+
 
 
 
